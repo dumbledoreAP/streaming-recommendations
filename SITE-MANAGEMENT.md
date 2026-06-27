@@ -23,5 +23,23 @@ Follow this procedure exactly:
 - Keep per-service count consistent (currently 8 per service, 10 for Apple TV+)
 - Genre icon + genre label + IMDb badge + season count for every entry
 
+## Swipe + Pending Sync
+Jeff can swipe cards on the site:
+- **Swipe right** → "Watched ✓" (green) → card disappears, shows in local Watched section
+- **Swipe left** → "Replace ↻" (amber) → card disappears, flagged for replacement
+
+Both store to `localStorage` in the browser. A "⚡ N pending" badge appears at the top.
+
+### Syncing pendings to data.json
+When Jeff mentions pending changes or on heartbeat check:
+1. Ask Jeff to confirm: "I can see X watched and Y replacements pending. Sync now?"
+2. For each watched: remove from active list, add to watched[] in data.json
+3. For each replace: remove from active list, research replacement, add new show
+4. Push to GitHub
+5. Tell Jeff to refresh — localStorage clears pending
+
+### Clearing pendings
+After sync, Jeff should refresh the page. The pending badge clears when localStorage no longer has those items.
+
 ## Updating the Data
-After Phase 1 refactor, data lives in `data.json` and is rendered by JS in `index.html`. Edit the JSON, push, done.
+Data lives in `data.json` and is rendered by JS in `index.html`. Edit the JSON, push, done.

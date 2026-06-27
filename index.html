@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>What to Watch — Australia</title>
   <style>
     :root {
@@ -16,13 +16,12 @@
       --accent-light: #f5ecd7;
       --tag-bg: #f5f0e8;
       --tag-text: #7a6b4f;
-      --imdb-bg: #f5f0e8;
-      --imdb-text: #8b6914;
       --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
       --shadow-hover: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
       --radius: 14px;
-      --radius-sm: 8px;
       --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      --watched-green: #4caf50;
+      --replace-amber: #e6a817;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,6 +33,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       line-height: 1.5;
+      overflow-x: hidden;
     }
 
     .container { max-width: 720px; margin: 0 auto; padding: 24px 20px 64px; }
@@ -54,10 +54,32 @@
       color: var(--text-secondary);
       font-weight: 400;
     }
+    .header-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
     .last-updated {
       font-size: 13px;
       color: #b8a88a;
-      margin-top: 6px;
+    }
+    .sync-badge {
+      font-size: 12px;
+      background: var(--replace-amber);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      display: none;
+      animation: pulse-badge 2s ease-in-out infinite;
+    }
+    .sync-badge.show { display: inline-block; }
+    @keyframes pulse-badge {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
     }
 
     .service-section { margin-top: 20px; }
@@ -98,16 +120,67 @@
 
     .card-list { display: flex; flex-direction: column; gap: 8px; }
 
+    /* Swipe wrapper */
+    .swipe-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pan-y;
+    }
+
+    .swipe-action {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.1px;
+      padding: 0 20px;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 0;
+      min-width: 120px;
+    }
+    .swipe-action-left {
+      left: 0;
+      justify-content: flex-start;
+      background: var(--watched-green);
+      color: #fff;
+      border-radius: var(--radius) 0 0 var(--radius);
+    }
+    .swipe-action-right {
+      right: 0;
+      justify-content: flex-end;
+      background: var(--replace-amber);
+      color: #fff;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
     .card {
       background: var(--card);
       border-radius: var(--radius);
       padding: 14px 16px;
       box-shadow: var(--shadow);
-      transition: box-shadow 0.2s ease, background 0.2s ease;
       display: flex;
       align-items: center;
       gap: 12px;
       border: 1px solid transparent;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1.2),
+                  box-shadow 0.2s ease, background 0.2s ease;
+      will-change: transform;
+      cursor: grab;
+    }
+    .card:active { cursor: grabbing; }
+    .card.dragging {
+      transition: none;
     }
     .card:hover {
       box-shadow: var(--shadow-hover);
@@ -120,6 +193,18 @@
       text-decoration-color: #c4b99a;
       text-decoration-thickness: 1px;
     }
+    .card.removing {
+      transform: translateX(120%) !important;
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+      margin-bottom: -56px;
+    }
+    .card.replacing {
+      transform: translateX(-120%) !important;
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+      margin-bottom: -56px;
+    }
 
     .card-icon {
       font-size: 28px;
@@ -130,7 +215,7 @@
       flex-shrink: 0;
     }
 
-    .card-body { flex: 1; min-width: 0; }
+    .card-body { flex: 1; min-width: 0; pointer-events: none; }
 
     .card-title-row {
       display: flex;
@@ -212,8 +297,10 @@
       font-weight: 600;
       letter-spacing: -0.15px;
     }
-    .watched-header .check-icon {
-      font-size: 18px;
+    .watched-byline {
+      font-size: 12px;
+      color: #c4b99a;
+      margin-left: auto;
     }
     .watched-empty {
       text-align: center;
@@ -222,11 +309,60 @@
       font-size: 14px;
       font-style: italic;
     }
-    .watched-byline {
+
+    /* Undo toast */
+    .undo-toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #2d2218;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      pointer-events: auto;
+    }
+    .undo-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+    .undo-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: var(--font);
+    }
+    .undo-btn:active { background: rgba(255,255,255,0.1); }
+
+    /* Swipe hint */
+    .swipe-hint {
+      text-align: center;
       font-size: 12px;
       color: #c4b99a;
-      margin-left: auto;
+      padding: 8px 0 0;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
     }
+    .swipe-hint span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .swipe-hint .hint-watched { color: #81c784; }
+    .swipe-hint .hint-replace { color: #e6a817; }
 
     footer {
       text-align: center;
@@ -251,7 +387,10 @@
     <header>
       <h1>What to Watch</h1>
       <p>Curated TV shows, documentaries, and movies in Australia</p>
-      <div class="last-updated">Updated <span id="updated-date">June 2026</span></div>
+      <div class="header-meta">
+        <span class="last-updated">Updated <span id="updated-date">June 2026</span></span>
+        <span class="sync-badge" id="sync-badge">⚡ <span id="sync-count">0</span> pending</span>
+      </div>
     </header>
 
     <div id="services-container"></div>
@@ -261,19 +400,296 @@
     <footer>
       <p>Made with ❤️ &nbsp;·&nbsp; <a href="https://github.com/dumbledoreAP/streaming-recommendations">GitHub</a></p>
     </footer>
+
+    <div class="undo-toast" id="undo-toast">
+      <span id="undo-msg"></span>
+      <button class="undo-btn" onclick="undoLast()">Undo</button>
+    </div>
   </div>
 
   <script>
-    (async () => {
+    // ── State ──
+    const LS_WATCHED = 'streaming_pending_watched';
+    const LS_REPLACE = 'streaming_pending_replace';
+    let pendingWatched = JSON.parse(localStorage.getItem(LS_WATCHED) || '[]');
+    let pendingReplace = JSON.parse(localStorage.getItem(LS_REPLACE) || '[]');
+    let lastAction = null; // { type, show, serviceId, cardEl, wrapperEl }
+    let undoTimer = null;
+
+    // ── Swipe engine ──
+    const THRESHOLD = 0.33; // 33% of card width to trigger
+    let activeSwipe = null; // { wrapper, card, startX, startY, offsetX, swiping, direction }
+    let allSwipes = [];
+
+    function attachSwipe(wrapper, card, onWatched, onReplace) {
+      const entry = { wrapper, card, onWatched, onReplace };
+      allSwipes.push(entry);
+
+      // Touch
+      card.addEventListener('touchstart', e => onStart(e.touches[0], entry), { passive: false });
+      card.addEventListener('touchmove', e => onMove(e.touches[0], entry), { passive: false });
+      card.addEventListener('touchend', () => onEnd(entry));
+
+      // Mouse
+      card.addEventListener('mousedown', e => onStart(e, entry));
+
+      return entry;
+    }
+
+    function onStart(point, entry) {
+      if (entry.card.classList.contains('removing') || entry.card.classList.contains('replacing')) return;
+      activeSwipe = {
+        ...entry,
+        startX: point.clientX,
+        startY: point.clientY,
+        offsetX: 0,
+        swiping: null,
+        maxOffset: 0
+      };
+      entry.card.classList.add('dragging');
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    }
+
+    function onMouseMove(e) {
+      if (!activeSwipe) return;
+      onMove(e, activeSwipe);
+    }
+
+    function onMouseUp() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      if (!activeSwipe) return;
+      onEnd(activeSwipe);
+    }
+
+    function onMove(point, entry) {
+      if (!activeSwipe || activeSwipe.wrapper !== entry.wrapper) return;
+      const dx = point.clientX - activeSwipe.startX;
+      const dy = point.clientY - activeSwipe.startY;
+
+      // Determine direction if not locked
+      if (activeSwipe.swiping === null) {
+        if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+          activeSwipe.swiping = true;
+        } else if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
+          activeSwipe.swiping = false;
+        }
+        if (activeSwipe.swiping === null) return;
+      }
+      if (!activeSwipe.swiping) return;
+
+      activeSwipe.offsetX = dx;
+      activeSwipe.maxOffset = Math.max(activeSwipe.maxOffset, Math.abs(dx));
+
+      const wrapper = entry.wrapper;
+      const leftAction = wrapper.querySelector('.swipe-action-left');
+      const rightAction = wrapper.querySelector('.swipe-action-right');
+      const cardW = entry.card.offsetWidth;
+      const absDx = Math.abs(dx);
+      const fraction = Math.min(absDx / cardW, 1);
+      const triggerZone = absDx / cardW;
+
+      entry.card.style.transform = `translateX(${dx}px)`;
+
+      if (dx > 0) {
+        // Swiping right → Watched (left action)
+        leftAction.style.opacity = fraction;
+        leftAction.style.width = Math.min(dx, cardW) + 'px';
+        rightAction.style.opacity = '0';
+        // Scale label
+        const label = leftAction.querySelector('.action-label');
+        if (label) {
+          const scale = Math.min(triggerZone / THRESHOLD, 1);
+          label.style.transform = `scale(${0.6 + 0.4 * scale})`;
+          label.style.opacity = Math.min(triggerZone / 0.15, 1);
+        }
+      } else if (dx < 0) {
+        // Swiping left → Replace (right action)
+        rightAction.style.opacity = fraction;
+        rightAction.style.width = Math.min(absDx, cardW) + 'px';
+        leftAction.style.opacity = '0';
+        const label = rightAction.querySelector('.action-label');
+        if (label) {
+          const scale = Math.min(triggerZone / THRESHOLD, 1);
+          label.style.transform = `scale(${0.6 + 0.4 * scale})`;
+          label.style.opacity = Math.min(triggerZone / 0.15, 1);
+        }
+      }
+    }
+
+    function onEnd(entry) {
+      if (!activeSwipe) return;
+      entry.card.classList.remove('dragging');
+
+      const cardW = entry.card.offsetWidth;
+      const dx = activeSwipe.offsetX;
+      const absDx = Math.abs(dx);
+
+      // Reset actions
+      const leftAction = entry.wrapper.querySelector('.swipe-action-left');
+      const rightAction = entry.wrapper.querySelector('.swipe-action-right');
+      leftAction.style.opacity = '0';
+      leftAction.style.width = 'auto';
+      rightAction.style.opacity = '0';
+      rightAction.style.width = 'auto';
+      const labels = entry.wrapper.querySelectorAll('.action-label');
+      labels.forEach(l => { l.style.transform = ''; l.style.opacity = ''; });
+
+      if (absDx / cardW >= THRESHOLD && activeSwipe.swiping) {
+        // Trigger action
+        if (dx > 0) {
+          entry.onWatched(entry);
+        } else {
+          entry.onReplace(entry);
+        }
+        activeSwipe = null;
+        return;
+      }
+
+      // Snap back
+      entry.card.style.transition = 'transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1.1)';
+      entry.card.style.transform = 'translateX(0)';
+      setTimeout(() => {
+        entry.card.style.transition = '';
+      }, 260);
+      activeSwipe = null;
+    }
+
+    // ── Toast ──
+    function showToast(msg) {
+      const toast = document.getElementById('undo-toast');
+      document.getElementById('undo-msg').textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(undoTimer);
+      undoTimer = setTimeout(hideToast, 4000);
+    }
+
+    function hideToast() {
+      document.getElementById('undo-toast').classList.remove('show');
+    }
+
+    function undoLast() {
+      hideToast();
+      if (!lastAction) return;
+      const { type, show, serviceId, cardEl, wrapperEl } = lastAction;
+
+      // Remove from pending
+      if (type === 'watched') {
+        pendingWatched = pendingWatched.filter(s => s.title !== show.title);
+        localStorage.setItem(LS_WATCHED, JSON.stringify(pendingWatched));
+      } else if (type === 'replace') {
+        pendingReplace = pendingReplace.filter(s => s.title !== show.title);
+        localStorage.setItem(LS_REPLACE, JSON.stringify(pendingReplace));
+      }
+
+      // Restore card
+      if (cardEl) {
+        cardEl.classList.remove('removing', 'replacing');
+        cardEl.style.transform = '';
+        cardEl.style.marginBottom = '';
+        setTimeout(() => { cardEl.style.transition = ''; }, 360);
+      }
+
+      // Re-render
+      refreshPendingUI();
+      lastAction = null;
+
+      // If it was watched and we're showing it locally, remove from local watched display
+      renderWatchedSection();
+    }
+
+    // ── Actions ──
+    function markWatched(show, serviceId, entry) {
+      if (pendingWatched.some(s => s.title === show.title) ||
+          pendingReplace.some(s => s.title === show.title)) return;
+
+      pendingWatched.push({ ...show, service: serviceId, _ts: Date.now() });
+      localStorage.setItem(LS_WATCHED, JSON.stringify(pendingWatched));
+
+      // Animate out
+      animateOut(entry.card, 'removing');
+
+      lastAction = { type: 'watched', show, serviceId, cardEl: entry.card, wrapperEl: entry.wrapper };
+      refreshPendingUI();
+      showToast('Marked as watched');
+      renderWatchedSection();
+    }
+
+    function markReplace(show, serviceId, entry) {
+      if (pendingReplace.some(s => s.title === show.title) ||
+          pendingWatched.some(s => s.title === show.title)) return;
+
+      pendingReplace.push({ ...show, service: serviceId, _ts: Date.now() });
+      localStorage.setItem(LS_REPLACE, JSON.stringify(pendingReplace));
+
+      // Animate out
+      animateOut(entry.card, 'replacing');
+
+      lastAction = { type: 'replace', show, serviceId, cardEl: entry.card, wrapperEl: entry.wrapper };
+      refreshPendingUI();
+      showToast('Flagged for replacement');
+    }
+
+    function animateOut(card, cls) {
+      card.classList.add(cls);
+      const wrapper = card.parentElement;
+      // Collapse wrapper height after animation
+      setTimeout(() => {
+        wrapper.style.maxHeight = '0';
+        wrapper.style.marginBottom = '0';
+        wrapper.style.overflow = 'hidden';
+        wrapper.style.transition = 'max-height 0.35s ease, margin 0.35s ease';
+      }, 50);
+    }
+
+    // ── Pending UI ──
+    function refreshPendingUI() {
+      const total = pendingWatched.length + pendingReplace.length;
+      const badge = document.getElementById('sync-badge');
+      const countEl = document.getElementById('sync-count');
+
+      if (total > 0) {
+        countEl.textContent = total;
+        badge.classList.add('show');
+      } else {
+        badge.classList.remove('show');
+      }
+
+      // Update service counts (hide cards that are pending)
+      updatePendingCardVisibility();
+    }
+
+    function updatePendingCardVisibility() {
+      const allPending = [...pendingWatched, ...pendingReplace];
+      allSwipes.forEach(entry => {
+        // The card data is in a data attribute we can set
+        const showTitle = entry.card.querySelector('.card-title')?.textContent;
+        if (showTitle && allPending.some(s => s.title === showTitle)) {
+          entry.wrapper.style.maxHeight = '0';
+          entry.wrapper.style.marginBottom = '0';
+          entry.wrapper.style.overflow = 'hidden';
+          entry.wrapper.style.transition = 'max-height 0.35s ease, margin 0.35s ease';
+        }
+      });
+    }
+
+    // ── Render ──
+    async function init() {
       const resp = await fetch('./data.json');
       const data = await resp.json();
 
-      // Set date from data if present
       if (data.updated) {
         document.getElementById('updated-date').textContent = data.updated;
       }
 
       const servicesEl = document.getElementById('services-container');
+
+      // Build set of pending titles to skip
+      const pendingTitles = new Set([
+        ...pendingWatched.map(s => s.title),
+        ...pendingReplace.map(s => s.title)
+      ]);
 
       data.services.forEach((svc, idx) => {
         if (idx > 0) {
@@ -286,46 +702,106 @@
         section.className = 'service-section';
         section.id = svc.id;
 
+        const activeShows = svc.shows.filter(s => !pendingTitles.has(s.title));
+
         section.innerHTML = `
           <div class="service-header">
             <div class="service-logo ${svc.logoClass}">${svc.logo}</div>
             <span class="service-name">${svc.name}</span>
-            <span class="service-count">${svc.shows.length} picks</span>
+            <span class="service-count">${activeShows.length} picks</span>
           </div>
-          <div class="card-list">
-            ${svc.shows.map(s => `
-              <div class="card">
-                <div class="card-icon">${s.icon}</div>
-                <div class="card-body">
-                  <div class="card-title-row">
-                    <span class="card-title">${s.title}</span>
-                    <span class="card-type ${s.type === 'movie' ? 'movie' : s.type === 'doc' ? 'doc' : ''}">${s.type}</span>
-                  </div>
-                  <div class="card-meta">
-                    <span class="card-genre">${s.genre}</span>
-                    <span>${s.seasons}</span>
-                  </div>
-                </div>
-                <div class="imdb-badge"><span class="imdb-star">★</span> ${s.imdb.toFixed(1)}</div>
-              </div>
-            `).join('')}
-          </div>
+          <div class="card-list" data-service="${svc.id}"></div>
         `;
 
         servicesEl.appendChild(section);
+
+        const cardList = section.querySelector('.card-list');
+
+        activeShows.forEach(show => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'swipe-wrapper';
+
+          wrapper.innerHTML = `
+            <div class="swipe-action swipe-action-left"><span class="action-label">✅ Watched</span></div>
+            <div class="swipe-action swipe-action-right"><span class="action-label">↻ Replace</span></div>
+            <div class="card">
+              <div class="card-icon">${show.icon}</div>
+              <div class="card-body">
+                <div class="card-title-row">
+                  <span class="card-title">${show.title}</span>
+                  <span class="card-type ${show.type === 'movie' ? 'movie' : show.type === 'doc' ? 'doc' : ''}">${show.type}</span>
+                </div>
+                <div class="card-meta">
+                  <span class="card-genre">${show.genre}</span>
+                  <span>${show.seasons}</span>
+                </div>
+              </div>
+              <div class="imdb-badge"><span class="imdb-star">★</span> ${show.imdb.toFixed(1)}</div>
+            </div>
+          `;
+
+          cardList.appendChild(wrapper);
+
+          const card = wrapper.querySelector('.card');
+          attachSwipe(wrapper, card,
+            (entry) => markWatched(show, svc.id, entry),
+            (entry) => markReplace(show, svc.id, entry)
+          );
+        });
+
+        // Add swipe hint after first service's card list
+        if (idx === 0 && activeShows.length > 0) {
+          const hint = document.createElement('div');
+          hint.className = 'swipe-hint';
+          hint.innerHTML = `
+            <span class="hint-watched">← Swipe right → · Watched</span>
+            <span class="hint-replace">← Swipe left · Replace</span>
+          `;
+          cardList.appendChild(hint);
+        }
       });
 
-      // Watched section
+      // Render watched section
+      renderWatchedSection(data);
+
+      // Check for pending items from prev session that need hiding
+      updatePendingCardVisibility();
+      refreshPendingUI();
+    }
+
+    function renderWatchedSection(dataOverride) {
       const watchedEl = document.getElementById('watched-container');
-      if (data.watched && data.watched.length > 0) {
+      // Merge data.json watched with locally pending watched
+      const localWatched = pendingWatched.map(s => ({ ...s, local: true }));
+
+      // Get data.json watched if available
+      let dataWatched = [];
+      if (dataOverride) {
+        dataWatched = (dataOverride.watched || []).map(s => ({ ...s, data: true }));
+      } else {
+        // Re-fetch? Or use cached - for simplicity, just use localStorage merge
+        dataWatched = [];
+      }
+
+      // Merge, deduplicate by title
+      const seen = new Set();
+      const allWatched = [];
+      for (const s of [...dataWatched, ...localWatched]) {
+        if (!seen.has(s.title)) {
+          seen.add(s.title);
+          allWatched.push(s);
+        }
+      }
+
+      if (allWatched.length > 0) {
         watchedEl.innerHTML = `
           <div class="section-divider"></div>
           <div class="watched-header">
-            <span class="check-icon">✅</span> Recently Watched
-            <span class="watched-byline">${data.watched.length} cleared</span>
+            <span>✅</span> Recently Watched
+            <span class="watched-byline">${allWatched.length} cleared</span>
           </div>
           <div class="card-list">
-            ${data.watched.map(s => `
+            ${allWatched.map(s => `
               <div class="card watched">
                 <div class="card-icon">${s.icon}</div>
                 <div class="card-body">
@@ -343,8 +819,13 @@
             `).join('')}
           </div>
         `;
+      } else {
+        watchedEl.innerHTML = '';
       }
-    })();
+    }
+
+    // ── Bootstrap ──
+    init();
   </script>
 </body>
 </html>
