@@ -159,6 +159,54 @@
       gap: 10px;
       margin-bottom: 12px;
       padding-bottom: 8px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .service-header:hover .service-arrow {
+      opacity: 1;
+    }
+    .service-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.1),
+                  opacity 0.2s ease;
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+    .service-arrow.expanded {
+      transform: rotate(180deg);
+    }
+    .service-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 26px;
+      height: 24px;
+      border-radius: 12px;
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+    .card-list-wrapper {
+      overflow: hidden;
+      max-height: 6000px;
+      transition: max-height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1),
+                  opacity 0.4s ease;
+      opacity: 1;
+    }
+    .card-list-wrapper.collapsed {
+      max-height: 0;
+      opacity: 0;
     }
     .service-logo {
       width: 32px; height: 32px;
@@ -180,12 +228,7 @@
       letter-spacing: -0.2px;
       color: var(--text);
     }
-    .service-count {
-      font-size: 14px;
-      color: var(--text-secondary);
-      font-weight: 400;
-      margin-left: auto;
-    }
+
 
     .card-list { display: flex; flex-direction: column; gap: 8px; }
 
@@ -812,15 +855,33 @@
         const activeShows = svc.shows.filter(s => !pendingTitles.has(s.title));
 
         section.innerHTML = `
-          <div class="service-header">
+          <div class="service-header" data-service="${svc.id}">
+            <span class="service-arrow">▼</span>
             <div class="service-logo ${svc.logoClass}">${svc.logo}</div>
             <span class="service-name">${svc.name}</span>
-            <span class="service-count">${activeShows.length} picks</span>
+            <span class="service-count-badge">${activeShows.length}</span>
           </div>
-          <div class="card-list" data-service="${svc.id}"></div>
+          <div class="card-list-wrapper collapsed" data-service="${svc.id}">
+            <div class="card-list"></div>
+          </div>
         `;
 
         servicesEl.appendChild(section);
+
+        // click handler for collapse/expand
+        const header = section.querySelector('.service-header');
+        const wrapper = section.querySelector('.card-list-wrapper');
+        const arrow = header.querySelector('.service-arrow');
+        header.addEventListener('click', () => {
+          const isCollapsed = wrapper.classList.contains('collapsed');
+          if (isCollapsed) {
+            wrapper.classList.remove('collapsed');
+            arrow.classList.add('expanded');
+          } else {
+            wrapper.classList.add('collapsed');
+            arrow.classList.remove('expanded');
+          }
+        });
 
         const cardList = section.querySelector('.card-list');
 
