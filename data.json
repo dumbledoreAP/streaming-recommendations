@@ -1,0 +1,103 @@
+{
+  "services": [
+    {
+      "id": "netflix",
+      "name": "Netflix",
+      "logo": "N",
+      "logoClass": "logo-netflix",
+      "shows": [
+        { "title": "Better Call Saul", "type": "series", "genre": "🎭 Crime Drama", "icon": "⚖️", "seasons": "6 seasons", "imdb": 9.0 },
+        { "title": "Arcane", "type": "series", "genre": "🎨 Animation Action", "icon": "🖌️", "seasons": "2 seasons", "imdb": 9.0 },
+        { "title": "Black Mirror", "type": "series", "genre": "🔬 Sci-Fi Drama", "icon": "🖥️", "seasons": "7 seasons", "imdb": 8.7 },
+        { "title": "Stranger Things", "type": "series", "genre": "🔬 Sci-Fi Drama", "icon": "🚲", "seasons": "5 seasons", "imdb": 8.7 },
+        { "title": "Blue Eye Samurai", "type": "series", "genre": "🎨 Animation Action", "icon": "🗡️", "seasons": "1 season", "imdb": 8.7 },
+        { "title": "The Crown", "type": "series", "genre": "👑 History Drama", "icon": "👑", "seasons": "6 seasons", "imdb": 8.6 },
+        { "title": "Derry Girls", "type": "series", "genre": "😂 Comedy", "icon": "😂", "seasons": "3 seasons", "imdb": 8.5 },
+        { "title": "The Queen's Gambit", "type": "series", "genre": "🎭 Drama", "icon": "♟️", "seasons": "Miniseries", "imdb": 8.5 }
+      ]
+    },
+    {
+      "id": "stan",
+      "name": "Stan",
+      "logo": "S",
+      "logoClass": "logo-stan",
+      "shows": [
+        { "title": "Yellowstone", "type": "series", "genre": "🏔️ Western Drama", "icon": "🤠", "seasons": "5 seasons", "imdb": 8.7 },
+        { "title": "Hacks", "type": "series", "genre": "😂 Comedy Drama", "icon": "🎙️", "seasons": "5 seasons", "imdb": 8.2 },
+        { "title": "Gangs of London", "type": "series", "genre": "🎬 Action Crime", "icon": "🚔", "seasons": "3 seasons", "imdb": 8.0 },
+        { "title": "Poker Face", "type": "series", "genre": "🔍 Mystery Crime", "icon": "🕵️", "seasons": "2 seasons", "imdb": 7.9 },
+        { "title": "The Tattooist of Auschwitz", "type": "series", "genre": "⚔️ War Drama", "icon": "🖋️", "seasons": "Miniseries", "imdb": 7.8 },
+        { "title": "Power Book III: Raising Kanan", "type": "series", "genre": "🕵️ Crime Drama", "icon": "💊", "seasons": "4 seasons", "imdb": 7.7 },
+        { "title": "Minx", "type": "series", "genre": "😂 Comedy", "icon": "📰", "seasons": "2 seasons", "imdb": 7.6 },
+        { "title": "Dr. Death", "type": "series", "genre": "🕵️ Crime Drama", "icon": "⚕️", "seasons": "2 seasons", "imdb": 7.6 }
+      ]
+    },
+    {
+      "id": "binge",
+      "name": "Binge",
+      "logo": "B",
+      "logoClass": "logo-binge",
+      "shows": [
+        { "title": "Succession", "type": "series", "genre": "🎭 Drama", "icon": "🏢", "seasons": "4 seasons", "imdb": 8.9 },
+        { "title": "The Last of Us", "type": "series", "genre": "🔬 Sci-Fi Drama", "icon": "🧟", "seasons": "2 seasons", "imdb": 8.7 },
+        { "title": "House of the Dragon", "type": "series", "genre": "✨ Fantasy Drama", "icon": "🐉", "seasons": "2 seasons", "imdb": 8.4 },
+        { "title": "The White Lotus", "type": "series", "genre": "😂 Dark Comedy", "icon": "🏖️", "seasons": "3 seasons", "imdb": 8.1 },
+        { "title": "Outlander", "type": "series", "genre": "💕 Historical Drama", "icon": "⏳", "seasons": "8 seasons", "imdb": 8.4 },
+        { "title": "Colin From Accounts", "type": "series", "genre": "😂 Comedy", "icon": "🐕", "seasons": "3 seasons", "imdb": 8.1 },
+        { "title": "Ted", "type": "series", "genre": "😂 Comedy", "icon": "🧸", "seasons": "2 seasons", "imdb": 7.9 },
+        { "title": "High Country", "type": "series", "genre": "🕵️ Crime Drama", "icon": "🏔️", "seasons": "2 seasons", "imdb": 7.1 }
+      ]
+    },
+    {
+      "id": "disney",
+      "name": "Disney+",
+      "logo": "D+",
+      "logoClass": "logo-disney",
+      "shows": [
+        { "title": "Shōgun", "type": "series", "genre": "⚔️ Historical Drama", "icon": "🏯", "seasons": "1 season", "imdb": 8.6 },
+        { "title": "The Bear", "type": "series", "genre": "😂 Comedy Drama", "icon": "🔪", "seasons": "5 seasons", "imdb": 8.5 },
+        { "title": "Andor", "type": "series", "genre": "🔬 Sci-Fi Thriller", "icon": "🛸", "seasons": "1 season", "imdb": 8.4 },
+        { "title": "The Americans", "type": "series", "genre": "🎭 Spy Thriller", "icon": "🕵️", "seasons": "6 seasons", "imdb": 8.4 },
+        { "title": "Only Murders in the Building", "type": "series", "genre": "🔍 Mystery Comedy", "icon": "🏢", "seasons": "5 seasons", "imdb": 8.1 },
+        { "title": "Abbott Elementary", "type": "series", "genre": "😂 Comedy", "icon": "🏫", "seasons": "4 seasons", "imdb": 8.1 },
+        { "title": "English Teacher", "type": "series", "genre": "😂 Comedy", "icon": "📚", "seasons": "1 season", "imdb": 7.7 },
+        { "title": "Fleishman Is in Trouble", "type": "series", "genre": "🎭 Drama", "icon": "🩺", "seasons": "Miniseries", "imdb": 7.7 }
+      ]
+    },
+    {
+      "id": "prime",
+      "name": "Prime Video",
+      "logo": "P",
+      "logoClass": "logo-prime",
+      "shows": [
+        { "title": "Clarkson's Farm", "type": "series", "genre": "🌴 Documentary", "icon": "🚜", "seasons": "4 seasons", "imdb": 9.0 },
+        { "title": "The Marvelous Mrs. Maisel", "type": "series", "genre": "😂 Comedy Drama", "icon": "🎤", "seasons": "5 seasons", "imdb": 8.7 },
+        { "title": "The Boys", "type": "series", "genre": "🎬 Action Drama", "icon": "💥", "seasons": "5 seasons", "imdb": 8.7 },
+        { "title": "Fleabag", "type": "series", "genre": "😂 Dark Comedy", "icon": "🍷", "seasons": "2 seasons", "imdb": 8.7 },
+        { "title": "The Expanse", "type": "series", "genre": "🔬 Sci-Fi Drama", "icon": "🚀", "seasons": "6 seasons", "imdb": 8.5 },
+        { "title": "The Legend of Vox Machina", "type": "series", "genre": "🎨 Fantasy Animation", "icon": "🐉", "seasons": "3 seasons", "imdb": 8.3 },
+        { "title": "Good Omens", "type": "series", "genre": "✨ Fantasy Comedy", "icon": "😇", "seasons": "2 seasons", "imdb": 8.0 },
+        { "title": "Mr. & Mrs. Smith", "type": "series", "genre": "🎬 Action Comedy", "icon": "💍", "seasons": "1 season", "imdb": 7.0 }
+      ]
+    },
+    {
+      "id": "apple",
+      "name": "Apple TV+",
+      "logo": "",
+      "logoClass": "logo-apple",
+      "shows": [
+        { "title": "Severance", "type": "series", "genre": "🔬 Sci-Fi Thriller", "icon": "🧠", "seasons": "3 seasons", "imdb": 8.7 },
+        { "title": "Ted Lasso", "type": "series", "genre": "😂 Comedy Drama", "icon": "⚽", "seasons": "4 seasons", "imdb": 8.7 },
+        { "title": "Pachinko", "type": "series", "genre": "🎭 Historical Drama", "icon": "📖", "seasons": "2 seasons", "imdb": 8.5 },
+        { "title": "Slow Horses", "type": "series", "genre": "🕵️ Spy Thriller", "icon": "🐌", "seasons": "7 seasons", "imdb": 8.3 },
+        { "title": "Bad Sisters", "type": "series", "genre": "😂 Dark Comedy", "icon": "👭", "seasons": "2 seasons", "imdb": 8.3 },
+        { "title": "Shrinking", "type": "series", "genre": "😂 Comedy Drama", "icon": "🧘", "seasons": "3 seasons", "imdb": 8.2 },
+        { "title": "The Morning Show", "type": "series", "genre": "🎭 Drama", "icon": "📺", "seasons": "5 seasons", "imdb": 8.2 },
+        { "title": "Silo", "type": "series", "genre": "🔬 Sci-Fi Drama", "icon": "🛗", "seasons": "4 seasons", "imdb": 8.1 },
+        { "title": "For All Mankind", "type": "series", "genre": "🔬 Sci-Fi Drama", "icon": "🌕", "seasons": "5 seasons", "imdb": 8.1 },
+        { "title": "Foundation", "type": "series", "genre": "🔬 Sci-Fi Epic", "icon": "🏛️", "seasons": "3 seasons", "imdb": 7.5 }
+      ]
+    }
+  ],
+  "watched": []
+}
