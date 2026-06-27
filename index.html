@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What to Watch — Australia</title>
+  <style>
+    :root {
+      --bg: #faf7f2;
+      --card: #ffffff;
+      --card-hover: #fffaf5;
+      --text: #2d2218;
+      --text-secondary: #6b5e4f;
+      --border: #e8dfd3;
+      --accent: #d4a853;
+      --accent-light: #f5ecd7;
+      --tag-bg: #f5f0e8;
+      --tag-text: #7a6b4f;
+      --imdb-bg: #f5f0e8;
+      --imdb-text: #8b6914;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+      --shadow-hover: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 24px 20px 64px; }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 40px 0 28px;
+    }
+    header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    header p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .last-updated {
+      font-size: 13px;
+      color: #b8a88a;
+      margin-top: 6px;
+    }
+
+    /* Service section */
+    .service-section { margin-top: 20px; }
+    
+    .service-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+    }
+    .service-logo {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px;
+      color: #fff;
+    }
+    /* Service colour palette - warm desaturated */
+    .logo-netflix { background: #c0392b; }
+    .logo-stan { background: #1769aa; }
+    .logo-binge { background: #9b59b6; }
+    .logo-disney { background: #1a5276; }
+    .logo-prime { background: #2980b9; }
+    .logo-apple { background: #2d2d2d; color: #f5f5f7; }
+
+    .service-name {
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: var(--text);
+    }
+    .service-count {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-left: auto;
+    }
+
+    /* Cards */
+    .card-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s ease, background 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid transparent;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      background: var(--card-hover);
+      border-color: var(--border);
+    }
+
+    .card-icon {
+      font-size: 28px;
+      width: 42px; height: 42px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--tag-bg);
+      border-radius: 11px;
+      flex-shrink: 0;
+    }
+
+    .card-body { flex: 1; min-width: 0; }
+    
+    .card-title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.15px;
+      color: var(--text);
+    }
+    .card-type {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f0e9d8;
+      color: #8b7332;
+    }
+    .card-type.movie { background: #e8dfd3; color: #6b5e4f; }
+    .card-type.doc { background: #dde8d5; color: #4a6741; }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 3px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .card-genre {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 12px;
+      color: var(--tag-text);
+      background: var(--tag-bg);
+      padding: 1px 8px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* IMDb badge */
+    .imdb-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f7f0d9;
+      color: #8b6914;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      letter-spacing: -0.1px;
+    }
+    .imdb-star { font-size: 12px; }
+
+    /* Divider */
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 28px 0;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 32px 0 16px;
+      font-size: 13px;
+      color: #b8a88a;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* Empty state */
+    .empty-note {
+      text-align: center;
+      padding: 16px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 520px) {
+      .container { padding: 16px 12px 48px; }
+      header { padding: 24px 0 20px; }
+      header h1 { font-size: 26px; }
+      .card { padding: 12px 14px; gap: 10px; }
+      .card-icon { width: 36px; height: 36px; font-size: 24px; border-radius: 9px; }
+      .card-title { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>What to Watch</h1>
+      <p>Curated TV shows, documentaries, and movies in Australia</p>
+      <div class="last-updated">Updated June 2026</div>
+    </header>
+
+    <!-- NETFLIX -->
+    <section class="service-section" id="netflix">
+      <div class="service-header">
+        <div class="service-logo logo-netflix">N</div>
+        <span class="service-name">Netflix</span>
+        <span class="service-count">8 picks</span>
+      </div>
+      <div class="card-list">
+        <div class="card">
+          <div class="card-icon">⚖️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Better Call Saul</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎭 Crime Drama</span><span>6 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 9.0</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖌️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Arcane</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎨 Animation Action</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 9.0</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖥️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Black Mirror</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Drama</span><span>7 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚲</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Stranger Things</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Drama</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🗡️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Blue Eye Samurai</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎨 Animation Action</span><span>1 season</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">👑</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Crown</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">👑 History Drama</span><span>6 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.6</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">😂</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Derry Girls</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy</span><span>3 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.5</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">♟️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Queen's Gambit</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎭 Drama</span><span>Miniseries</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.5</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- STAN -->
+    <section class="service-section" id="stan">
+      <div class="service-header">
+        <div class="service-logo logo-stan">S</div>
+        <span class="service-name">Stan</span>
+        <span class="service-count">8 picks</span>
+      </div>
+      <div class="card-list">
+        <div class="card">
+          <div class="card-icon">🤠</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Yellowstone</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🏔️ Western Drama</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎙️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Hacks</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy Drama</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.2</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚔</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Gangs of London</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎬 Action Crime</span><span>3 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.0</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🕵️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Poker Face</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔍 Mystery Crime</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.9</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖋️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Tattooist of Auschwitz</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">⚔️ War Drama</span><span>Miniseries</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.8</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💊</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Power Book III: Raising Kanan</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🕵️ Crime Drama</span><span>4 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📰</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Minx</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.6</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚕️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Dr. Death</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🕵️ Crime Drama</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.6</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- BINGE -->
+    <section class="service-section" id="binge">
+      <div class="service-header">
+        <div class="service-logo logo-binge">B</div>
+        <span class="service-name">Binge</span>
+        <span class="service-count">8 picks</span>
+      </div>
+      <div class="card-list">
+        <div class="card">
+          <div class="card-icon">🏢</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Succession</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎭 Drama</span><span>4 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.9</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧟</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Last of Us</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Drama</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🐉</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">House of the Dragon</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">✨ Fantasy Drama</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.4</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏖️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The White Lotus</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Dark Comedy</span><span>3 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.1</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⏳</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Outlander</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">💕 Historical Drama</span><span>8 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.4</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🐕</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Colin From Accounts</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy</span><span>3 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.1</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧸</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Ted</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.9</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏔️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">High Country</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🕵️ Crime Drama</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.1</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- DISNEY+ -->
+    <section class="service-section" id="disney">
+      <div class="service-header">
+        <div class="service-logo logo-disney">D+</div>
+        <span class="service-name">Disney+</span>
+        <span class="service-count">8 picks</span>
+      </div>
+      <div class="card-list">
+        <div class="card">
+          <div class="card-icon">🏯</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Shōgun</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">⚔️ Historical Drama</span><span>1 season</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.6</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔪</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Bear</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy Drama</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.5</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛸</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Andor</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Thriller</span><span>1 season</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.4</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🕵️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Americans</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎭 Spy Thriller</span><span>6 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.4</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏢</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Only Murders in the Building</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔍 Mystery Comedy</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.1</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏫</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Abbott Elementary</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy</span><span>4 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.1</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📚</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">English Teacher</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy</span><span>1 season</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🩺</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Fleishman Is in Trouble</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎭 Drama</span><span>Miniseries</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.7</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- PRIME VIDEO -->
+    <section class="service-section" id="prime">
+      <div class="service-header">
+        <div class="service-logo logo-prime">P</div>
+        <span class="service-name">Prime Video</span>
+        <span class="service-count">8 picks</span>
+      </div>
+      <div class="card-list">
+        <div class="card">
+          <div class="card-icon">🚜</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Clarkson's Farm</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🌴 Documentary</span><span>4 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 9.0</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎤</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Marvelous Mrs. Maisel</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy Drama</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💥</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Boys</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎬 Action Drama</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🍷</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Fleabag</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Dark Comedy</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Expanse</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Drama</span><span>6 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.5</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🐉</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Legend of Vox Machina</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎨 Fantasy Animation</span><span>3 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.3</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">😇</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Good Omens</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">✨ Fantasy Comedy</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.0</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💍</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Mr. &amp; Mrs. Smith</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎬 Action Comedy</span><span>1 season</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.0</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- APPLE TV+ -->
+    <section class="service-section" id="apple">
+      <div class="service-header">
+        <div class="service-logo logo-apple"></div>
+        <span class="service-name">Apple TV+</span>
+        <span class="service-count">10 picks</span>
+      </div>
+      <div class="card-list">
+        <div class="card">
+          <div class="card-icon">🧠</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Severance</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Thriller</span><span>3 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚽</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Ted Lasso</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy Drama</span><span>4 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.7</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📖</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Pachinko</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎭 Historical Drama</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.5</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🐌</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Slow Horses</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🕵️ Spy Thriller</span><span>7 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.3</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">👭</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Bad Sisters</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Dark Comedy</span><span>2 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.3</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧘</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Shrinking</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">😂 Comedy Drama</span><span>3 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.2</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📺</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">The Morning Show</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🎭 Drama</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.2</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛗</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Silo</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Drama</span><span>4 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.1</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌕</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">For All Mankind</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Drama</span><span>5 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 8.1</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-body">
+            <div class="card-title-row"><span class="card-title">Foundation</span><span class="card-type">series</span></div>
+            <div class="card-meta"><span class="card-genre">🔬 Sci-Fi Epic</span><span>3 seasons</span></div>
+          </div>
+          <div class="imdb-badge"><span class="imdb-star">★</span> 7.5</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Made with ❤️ &nbsp;·&nbsp; <a href="https://github.com/dumbledoreAP/streaming-recommendations">GitHub</a></p>
+    </footer>
+  </div>
+</body>
+</html>
