@@ -66,20 +66,89 @@
       font-size: 13px;
       color: #b8a88a;
     }
-    .sync-badge {
-      font-size: 12px;
-      background: var(--replace-amber);
+
+    /* Floating Tell Dumbledore button */
+    .floating-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      background: #2d2218;
       color: #fff;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-weight: 600;
-      display: none;
-      animation: pulse-badge 2s ease-in-out infinite;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      z-index: 999;
+      transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1.1),
+                  background 0.2s ease,
+                  border-radius 0.3s ease,
+                  width 0.3s ease,
+                  padding 0.3s ease;
+      transform: scale(0);
+      opacity: 0;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    .sync-badge.show { display: inline-block; }
-    @keyframes pulse-badge {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
+    .floating-btn.show {
+      transform: scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .floating-btn:active {
+      transform: scale(0.92);
+      background: #3d3228;
+    }
+    .floating-btn .badge-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease;
+    }
+    .floating-btn.show .badge-dot {
+      animation: pop-in 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+    }
+    @keyframes pop-in {
+      0% { transform: scale(0); }
+      60% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    .floating-btn-label {
+      position: fixed;
+      bottom: 34px;
+      right: 90px;
+      background: #2d2218;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateX(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    .floating-btn-label.show {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     .service-section { margin-top: 20px; }
@@ -313,7 +382,7 @@
     /* Undo toast */
     .undo-toast {
       position: fixed;
-      bottom: 28px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
       background: #2d2218;
@@ -389,7 +458,6 @@
       <p>Curated TV shows, documentaries, and movies in Australia</p>
       <div class="header-meta">
         <span class="last-updated">Updated <span id="updated-date">June 2026</span></span>
-        <span class="sync-badge" id="sync-badge">⚡ <span id="sync-count">0</span> pending</span>
       </div>
     </header>
 
@@ -405,6 +473,12 @@
       <span id="undo-msg"></span>
       <button class="undo-btn" onclick="undoLast()">Undo</button>
     </div>
+
+    <span class="floating-btn-label" id="floating-label">Tell Dumbledore</span>
+    <button class="floating-btn" id="floating-btn" title="Tell Dumbledore">
+      🧙‍♂️
+      <span class="badge-dot" id="float-badge">0</span>
+    </button>
   </div>
 
   <script>
@@ -646,19 +720,52 @@
     // ── Pending UI ──
     function refreshPendingUI() {
       const total = pendingWatched.length + pendingReplace.length;
-      const badge = document.getElementById('sync-badge');
-      const countEl = document.getElementById('sync-count');
+      const floatBtn = document.getElementById('floating-btn');
+      const floatBadge = document.getElementById('float-badge');
+      const floatLabel = document.getElementById('floating-label');
 
       if (total > 0) {
-        countEl.textContent = total;
-        badge.classList.add('show');
+        floatBadge.textContent = total;
+        floatBtn.classList.add('show');
+        floatLabel.classList.add('show');
+        // Hide label after a moment
+        clearTimeout(floatLabel._timer);
+        floatLabel._timer = setTimeout(() => floatLabel.classList.remove('show'), 3000);
       } else {
-        badge.classList.remove('show');
+        floatBtn.classList.remove('show');
+        floatLabel.classList.remove('show');
       }
 
-      // Update service counts (hide cards that are pending)
       updatePendingCardVisibility();
     }
+
+    // ── Tell Dumbledore ──
+    document.getElementById('floating-btn').addEventListener('click', async () => {
+      const lines = [];
+      if (pendingWatched.length > 0) {
+        lines.push('Watched: ' + pendingWatched.map(s => s.title + ' (' + s.service + ')').join(', '));
+      }
+      if (pendingReplace.length > 0) {
+        lines.push('Replace: ' + pendingReplace.map(s => s.title + ' (' + s.service + ')').join(', '));
+      }
+      try {
+        await navigator.clipboard.writeText(lines.join('\n'));
+        showToast('Copied! Paste it to Dumbledore');
+      } catch {
+        // Fallback: show in a prompt
+        showToast('Could not copy — try again');
+      }
+    });
+
+    // Show label on hover on desktop
+    const floatBtn = document.getElementById('floating-btn');
+    floatBtn.addEventListener('mouseenter', () => {
+      document.getElementById('floating-label').classList.add('show');
+    });
+    floatBtn.addEventListener('mouseleave', () => {
+      const total = pendingWatched.length + pendingReplace.length;
+      if (total === 0) document.getElementById('floating-label').classList.remove('show');
+    });
 
     function updatePendingCardVisibility() {
       const allPending = [...pendingWatched, ...pendingReplace];
