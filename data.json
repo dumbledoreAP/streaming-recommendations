@@ -1,4 +1,5 @@
 {
+  "updated": "27 June 2026",
   "services": [
     {
       "id": "netflix",
@@ -13,7 +14,7 @@
         { "title": "Blue Eye Samurai", "type": "series", "genre": "🎨 Animation Action", "icon": "🗡️", "seasons": "1 season", "imdb": 8.7 },
         { "title": "The Crown", "type": "series", "genre": "👑 History Drama", "icon": "👑", "seasons": "6 seasons", "imdb": 8.6 },
         { "title": "Derry Girls", "type": "series", "genre": "😂 Comedy", "icon": "😂", "seasons": "3 seasons", "imdb": 8.5 },
-        { "title": "The Queen's Gambit", "type": "series", "genre": "🎭 Drama", "icon": "♟️", "seasons": "Miniseries", "imdb": 8.5 }
+        { "title": "Peaky Blinders", "type": "series", "genre": "🎭 Crime Drama", "icon": "🎩", "seasons": "6 seasons", "imdb": 8.7 }
       ]
     },
     {
@@ -99,5 +100,7 @@
       ]
     }
   ],
-  "watched": []
+  "watched": [
+    { "title": "The Queen's Gambit", "type": "series", "genre": "🎭 Drama", "icon": "♟️", "seasons": "Miniseries", "imdb": 8.5, "service": "Netflix" }
+  ]
 }
