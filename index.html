@@ -793,6 +793,13 @@
       }
       try {
         await navigator.clipboard.writeText(lines.join('\n'));
+        // Clear pending state after copy — the list has been dispatched
+        pendingWatched = [];
+        pendingReplace = [];
+        localStorage.removeItem(LS_WATCHED);
+        localStorage.removeItem(LS_REPLACE);
+        lastAction = null;
+        refreshPendingUI();
         showToast('Copied! Paste it to Dumbledore');
       } catch {
         // Fallback: show in a prompt
